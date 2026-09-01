@@ -1,0 +1,12 @@
+node_modules/
+package-lock.json
+.env
+.env.*
+!.env.example
+logs/
+*.log
+.DS_Store
+.idea/
+.vscode/
+*.swp
+coverage/
