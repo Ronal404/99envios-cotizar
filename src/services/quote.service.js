@@ -24,6 +24,21 @@ const SERVICE_TYPE_IDS = {
   paquete: 2
 }
 
+const INSURANCE_TYPES = {
+  none: 'none',
+  ninguno: 'none',
+  no: 'none',
+  antidevolucion: 'antidevolucion',
+  'anti-devolucion': 'antidevolucion',
+  antireturn: 'antidevolucion',
+  'anti-return': 'antidevolucion',
+  seguro99: 'antidevolucion',
+  plus: 'plus',
+  'antidevolucion-plus': 'plus',
+  antidevolucionplus: 'plus',
+  seguro99plus: 'plus'
+}
+
 class QuoteService {
   constructor() {
     this.client = axios.create({
@@ -172,14 +187,9 @@ class QuoteService {
         ? Boolean(body.AplicaContrapago)
         : true
 
-    const antiReturnInsurance = Boolean(
-      body.antiReturnInsurance ?? body.seguro99
-    )
-    const antiReturnInsurancePlus = Boolean(
-      body.antiReturnInsurancePlus ?? body.seguro99plus
-    )
+    const insurance = this.resolveInsurance(body)
 
-    if ((antiReturnInsurance || antiReturnInsurancePlus) && !cashOnDelivery) {
+    if (insurance !== 'none' && !cashOnDelivery) {
       const error = new Error('Los seguros antidevolución solo aplican con pago contra entrega')
       error.status = 400
       throw error
@@ -204,9 +214,42 @@ class QuoteService {
       height: Math.round(height),
       declaredValue: Math.round(declaredValue),
       cashOnDelivery,
-      antiReturnInsurance: cashOnDelivery && antiReturnInsurance && !antiReturnInsurancePlus,
-      antiReturnInsurancePlus: cashOnDelivery && antiReturnInsurancePlus
+      insurance,
+      antiReturnInsurance: insurance === 'antidevolucion',
+      antiReturnInsurancePlus: insurance === 'plus'
     }
+  }
+
+  resolveInsurance(body) {
+    if (body.insurance != null && body.insurance !== '') {
+      if (body.insurance === true) {
+        return 'antidevolucion'
+      }
+      if (body.insurance === false) {
+        return 'none'
+      }
+      const key = String(body.insurance)
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '')
+      const type = INSURANCE_TYPES[key]
+      if (!type) {
+        const error = new Error(
+          'insurance inválido. Usa none, antidevolucion o plus'
+        )
+        error.status = 400
+        throw error
+      }
+      return type
+    }
+
+    if (body.antiReturnInsurancePlus === true || body.seguro99plus === true) {
+      return 'plus'
+    }
+    if (body.antiReturnInsurance === true || body.seguro99 === true) {
+      return 'antidevolucion'
+    }
+    return 'none'
   }
 
   buildUpstreamPayload(request) {
@@ -251,9 +294,15 @@ class QuoteService {
     const freight = Number(raw.valor || raw.flete || 0)
     const overfreight = Number(raw.sobreflete || 0)
     const cashOnDeliveryFee = Number(raw.valor_contrapago || 0)
-    const insurance = Number(raw.seguro99 || 0)
-    const insurancePlus = Number(raw.seguro99plus || 0)
-    const shippingCost = freight + overfreight + cashOnDeliveryFee + insurance + insurancePlus
+    const rawInsurance = Number(raw.seguro99 || 0)
+    const rawInsurancePlus = Number(raw.seguro99plus || 0)
+    // El backend a veces mete el Plus en seguro99
+    const insurance = request.insurance === 'antidevolucion' ? rawInsurance : 0
+    const insurancePlus = request.insurance === 'plus'
+      ? (rawInsurancePlus || rawInsurance)
+      : 0
+    const insuranceCost = insurance + insurancePlus
+    const shippingCost = freight + overfreight + cashOnDeliveryFee + insuranceCost
     const profit = request.cashOnDelivery
       ? request.declaredValue - shippingCost
       : null
@@ -266,8 +315,10 @@ class QuoteService {
       freight,
       overfreight,
       cashOnDeliveryFee,
+      insuranceType: request.insurance,
       insurance,
       insurancePlus,
+      insuranceCost,
       shippingCost,
       youReceive: request.cashOnDelivery ? request.declaredValue : null,
       profit,
@@ -349,7 +400,8 @@ class QuoteService {
       origin: request.origin && request.origin.code,
       destination: request.destination.code,
       billableWeight: request.billableWeight,
-      declaredValue: request.declaredValue
+      declaredValue: request.declaredValue,
+      insurance: request.insurance
     })
 
     let upstream
@@ -412,6 +464,7 @@ class QuoteService {
       deliveryType: request.deliveryType.name,
       serviceType: request.serviceType,
       cashOnDelivery: request.cashOnDelivery,
+      insurance: request.insurance,
       antiReturnInsurance: request.antiReturnInsurance,
       antiReturnInsurancePlus: request.antiReturnInsurancePlus,
       package: {
