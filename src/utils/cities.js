@@ -1,4 +1,6 @@
-const cities = require('../data/colombia-cities.json')
+const cities = require('../data/colombia-cities-a.json').concat(
+  require('../data/colombia-cities-b.json')
+)
 
 function stripAccents(value) {
   return String(value || '')
