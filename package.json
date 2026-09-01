@@ -1,0 +1,41 @@
+{
+  "name": "99envios-cotizar",
+  "version": "1.0.0",
+  "description": "API REST para cotizar envíos de 99 Envíos. Replica el contrato público de 99envios.app/cotizar. Sin Puppeteer.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "99envios",
+    "cotizar",
+    "shipping",
+    "colombia",
+    "api",
+    "interrapidisimo",
+    "coordinadora",
+    "tcc",
+    "servientrega"
+  ],
+  "author": "Ronal404",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.12.2",
+    "chalk": "^4.1.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^5.1.0",
+    "node-cache": "^5.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ronal404/99envios-cotizar"
+  }
+}
