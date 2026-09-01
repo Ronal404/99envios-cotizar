@@ -34,11 +34,22 @@ curl -X POST http://localhost:3002/api/quote \
     "height": 10,
     "declaredValue": 50000,
     "deliveryType": "direccion",
-    "cashOnDelivery": true
+    "cashOnDelivery": true,
+    "insurance": "antidevolucion"
   }'
 ```
 
 `originCity` y `destinationCity` aceptan código DANE (`05001000`) o nombre (`MEDELLIN`).
+
+`insurance` replica los checkboxes del cotizador web (solo con contraentrega):
+
+| Valor | Equivale en 99 Envíos | Qué cubre |
+|--------|------------------------|-----------|
+| `none` | sin seguro | Default |
+| `antidevolucion` | Seguro Antidevolución | Si hay devolución, no asumes el flete de ida |
+| `plus` | Seguro Antidevolución Plus | Devolución a costo cero (ida, regreso y seguro) |
+
+También acepta los booleanos `antiReturnInsurance` / `antiReturnInsurancePlus` (o `seguro99` / `seguro99plus`). Plus pisa al seguro normal, igual que en la web.
 
 ### Ciudades
 

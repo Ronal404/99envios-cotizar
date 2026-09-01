@@ -1,6 +1,6 @@
 {
   "name": "99envios-cotizar",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "API REST para cotizar envíos de 99 Envíos. Replica el contrato público de 99envios.app/cotizar. Sin Puppeteer.",
   "main": "src/index.js",
   "scripts": {
