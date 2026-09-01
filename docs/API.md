@@ -60,6 +60,29 @@ Costo en pantalla: `valor + sobreflete + valor_contrapago + seguro99 + seguro99p
 
 Oficina: la UI solo muestra Interrápidísimo y Coordinadora. Veredas: solo Interrápidísimo. Esta API marca `supportedForDeliveryType`.
 
+### POST `/api/sucursal/oficinas/{dane}`
+
+Usado en el formulario de **crear guía** (no en `/cotizar`). Sin autenticación.
+
+```json
+{ "city": "05001000" }
+```
+
+Respuesta: oficinas de Interrápidísimo.
+
+```json
+[
+  {
+    "CentroServicio": {
+      "IdCentroServicio": 2339,
+      "Direccion": "OF. PRINC CL 30 A 65 B 59 "
+    }
+  }
+]
+```
+
+Coordinadora no usa este endpoint: el dashboard llama a `apis.coordinadora.com/puntos-drop`. En esta API se expone como `GET /api/quote/offices/:city`. **No se cotiza por `officeId`**; `IdTipoEntrega: 2` + ciudad basta.
+
 ### GET `/api/ver-efectividad-ciudades/{dane}`
 
 ```json
