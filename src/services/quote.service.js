@@ -329,6 +329,87 @@ class QuoteService {
     }
   }
 
+  parseOffice(raw) {
+    const center = raw && (raw.CentroServicio || raw.centroServicio || raw)
+    if (!center || typeof center !== 'object') {
+      return null
+    }
+
+    const id = center.IdCentroServicio || center.idCentroServicio || center.id
+    const address = center.Direccion || center.direccion || null
+    if (id == null) {
+      return null
+    }
+
+    return {
+      id: Number(id) || id,
+      address: address ? String(address).trim() : null,
+      name: center.Nombre || center.nombre || address || String(id),
+      phone: center.Telefono || center.telefono || null,
+      cityCode: center.IdCiudad || center.idCiudad || null,
+      raw: center
+    }
+  }
+
+  async getOffices(cityInput) {
+    const city = resolveCity(cityInput)
+    if (!city) {
+      const error = new Error(
+        'Ciudad requerida. Usa código DANE o nombre, por ejemplo MEDELLIN o 05001000'
+      )
+      error.status = 400
+      throw error
+    }
+
+    const cacheKey = `offices99:${city.code}`
+    const cached = cache.get(cacheKey)
+    if (cached) {
+      return { ...cached, fromCache: true }
+    }
+
+    logger.info('Requesting 99 Envíos offices', { city: city.code })
+
+    let upstream
+    try {
+      const response = await this.client.post(
+        `/api/sucursal/oficinas/${city.code}`,
+        { city: city.code }
+      )
+      upstream = response.data
+    } catch (error) {
+      logger.error('Error calling 99 Envíos offices API', {
+        city: city.code,
+        error: error.message,
+        status: error.response && error.response.status
+      })
+      throw new Error('Failed to fetch offices from 99 Envíos: ' + error.message)
+    }
+
+    const offices = (Array.isArray(upstream) ? upstream : [])
+      .map((item) => this.parseOffice(item))
+      .filter(Boolean)
+
+    const result = {
+      success: true,
+      source: '99envios-public-offices',
+      carrier: 'interrapidisimo',
+      note:
+        'Oficinas de Interrápidísimo. Coordinadora usa otro API (puntos drop) en el dashboard. La cotización no usa officeId: se cotiza con deliveryType=oficina y la ciudad.',
+      city,
+      count: offices.length,
+      offices,
+      timestamp: new Date().toISOString(),
+      fromCache: false
+    }
+
+    cache.set(cacheKey, result)
+    logger.success('99 Envíos offices retrieved', {
+      city: city.code,
+      count: offices.length
+    })
+    return result
+  }
+
   async getCityEffectiveness(cityCode) {
     try {
       const response = await this.client.get(

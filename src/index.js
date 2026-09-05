@@ -59,6 +59,11 @@ app.get('/', (req, res) => {
       },
       {
         method: 'GET',
+        path: '/api/quote/offices/:city',
+        description: 'Oficinas Interrápidísimo de la ciudad (no cambia la cotización)'
+      },
+      {
+        method: 'GET',
         path: '/api/quote/effectiveness/:city',
         description: 'Efectividad histórica por transportadora'
       },
@@ -115,6 +120,7 @@ app.use((req, res) => {
     availableEndpoints: [
       'POST /api/quote',
       'GET /api/quote/cities',
+      'GET /api/quote/offices/:city',
       'GET /api/quote/effectiveness/:city',
       'GET /api/health'
     ]

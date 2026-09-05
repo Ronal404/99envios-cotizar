@@ -28,6 +28,8 @@ curl -X POST http://localhost:3002/api/quote \
 
 `insurance`: `none` (default) | `antidevolucion` | `plus`. Solo con contraentrega. Alias: `antiReturnInsurance` / `antiReturnInsurancePlus` o `seguro99` / `seguro99plus`.
 
+Oficinas Inter: `GET /api/quote/offices/MEDELLIN` (aguas arriba `POST /api/sucursal/oficinas/{dane}`). No entra en la cotización.
+
 ## Convenciones
 
 - Comillas simples

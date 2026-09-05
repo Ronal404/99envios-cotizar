@@ -57,6 +57,16 @@ También acepta los booleanos `antiReturnInsurance` / `antiReturnInsurancePlus` 
 curl "http://localhost:3002/api/quote/cities?q=medellin"
 ```
 
+### Oficinas (Interrápidísimo)
+
+El cotizador público no lista sedes. El formulario de **crear guía** sí: `POST /api/sucursal/oficinas/{dane}` sin login. Coordinadora usa otro API (puntos drop) en el dashboard; no lo envolvemos.
+
+La cotización **no** se hace con una oficina: se cotiza con `deliveryType: "oficina"` y la ciudad. Este GET solo lista puntos de Inter para mostrar o rellenar dirección después.
+
+```bash
+curl "http://localhost:3002/api/quote/offices/MEDELLIN"
+```
+
 ### Efectividad por transportadora
 
 ```bash
@@ -69,6 +79,7 @@ curl "http://localhost:3002/api/quote/effectiveness/MEDELLIN"
 |--------|------|-------------|
 | POST | `/api/quote` | Cotización multitransportadora |
 | GET | `/api/quote/cities?q=` | Catálogo DANE (1285 ciudades) |
+| GET | `/api/quote/offices/:city` | Oficinas Interrápidísimo de la ciudad |
 | GET | `/api/quote/effectiveness/:city` | Efectividad histórica |
 | GET | `/api/health` | Health check |
 | GET | `/api/cache/stats` | Stats del caché |
