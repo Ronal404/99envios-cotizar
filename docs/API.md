@@ -9,7 +9,7 @@ La página [https://99envios.app/cotizar](https://99envios.app/cotizar) es una S
 | Pieza | Detalle |
 |--------|---------|
 | Frontend | `https://99envios.app` (chunk `7093` cotizar, `3926` ciudades) |
-| Backend | `https://integration1.99envios.app` (PHP 8.2, CORS `*`)
+| Backend | `https://integration1.99envios.app` (PHP 8.2, CORS `*`) |
 | Auth | Ninguna. Sucursal `21119` en la URL |
 | Ciudades | Catálogo DANE de 8 dígitos embebido en el frontend (~1285) |
 
@@ -38,6 +38,7 @@ La página [https://99envios.app/cotizar](https://99envios.app/cotizar) es una S
 - Peso facturable: `max(peso bruto, largo*ancho*alto/6000)`
 - Valor declarado mínimo: $25.000; $40.000 si el peso es 3–5 kg; $50.000 si es ≥ 6 kg
 - Origen puede ir vacío
+- `seguro99` / `seguro99plus`: seguros antidevolución. En esta API se piden como `insurance: "none" | "antidevolucion" | "plus"` (o los booleanos `antiReturnInsurance` / `antiReturnInsurancePlus`). El backend a veces devuelve el costo Plus en `seguro99`
 
 Respuesta por transportadora (`interrapidisimo`, `tcc`, `servientrega`, `coordinadora`, `envia`):
 

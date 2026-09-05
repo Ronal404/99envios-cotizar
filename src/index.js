@@ -27,7 +27,7 @@ app.use('/api', quoteRoutes)
 app.get('/', (req, res) => {
   res.json({
     name: '99 Envíos Cotizar API',
-    version: '1.0.0',
+    version: '1.1.0',
     status: 'operational',
     description: 'API REST que replica el cotizador público de 99envios.app/cotizar',
     source: 'https://99envios.app/cotizar',
@@ -46,8 +46,9 @@ app.get('/', (req, res) => {
           declaredValue: 'number COP',
           deliveryType: 'direccion | oficina | veredas',
           cashOnDelivery: 'boolean (default: true)',
-          antiReturnInsurance: 'boolean',
-          antiReturnInsurancePlus: 'boolean',
+          insurance: 'none | antidevolucion | plus (default: none)',
+          antiReturnInsurance: 'boolean (alias de insurance=antidevolucion)',
+          antiReturnInsurancePlus: 'boolean (alias de insurance=plus)',
           useCache: 'boolean (default: true)'
         }
       },

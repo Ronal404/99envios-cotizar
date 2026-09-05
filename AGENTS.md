@@ -23,8 +23,10 @@ curl http://localhost:3002/api/health
 
 curl -X POST http://localhost:3002/api/quote \
   -H "Content-Type: application/json" \
-  -d '{"destinationCity":"MEDELLIN","originCity":"BOGOTA","weight":1,"length":10,"width":10,"height":10,"declaredValue":50000}'
+  -d '{"destinationCity":"MEDELLIN","originCity":"BOGOTA","weight":1,"length":10,"width":10,"height":10,"declaredValue":50000,"insurance":"antidevolucion"}'
 ```
+
+`insurance`: `none` (default) | `antidevolucion` | `plus`. Solo con contraentrega. Alias: `antiReturnInsurance` / `antiReturnInsurancePlus` o `seguro99` / `seguro99plus`.
 
 ## Convenciones
 
